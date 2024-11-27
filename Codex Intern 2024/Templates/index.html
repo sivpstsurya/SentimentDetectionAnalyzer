@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Sentiment Detection Analyzer</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <h1>Sentiment Detection</h1>
+        </div>
+        <div class="messages" id="messages">
+            <!-- Sentiment results will be displayed here -->
+        </div>
+        <div class="input-area">
+            <textarea id="text-input" placeholder="Type your message here..."></textarea>
+            <button class="analyze-button" id="analyze-button">Analyze</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyze-button').onclick = function() {
+            const text = document.getElementById('text-input').value;
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'text=' + encodeURIComponent(text),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = `<div class="message">
+                    <p><strong>Sentiment:</strong> ${data.sentiment}</p>
+                    <p><strong>Polarity:</strong> ${data.polarity.toFixed(2)}</p>
+                    <p><strong>Subjectivity:</strong> ${data.subjectivity.toFixed(2)}</p>
+                </div>`;
+            });
+        };
+    </script>
+</body>
+</html>
